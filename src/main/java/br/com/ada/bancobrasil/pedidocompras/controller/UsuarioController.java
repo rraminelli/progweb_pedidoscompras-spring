@@ -1,10 +1,13 @@
 package br.com.ada.bancobrasil.pedidocompras.controller;
 
 import br.com.ada.bancobrasil.pedidocompras.entity.Usuario;
+import br.com.ada.bancobrasil.pedidocompras.service.UsuarioService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -12,26 +15,29 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
+    final UsuarioService usuarioService;
+
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+
     @PostMapping
-    public void insert(@RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> insert(@RequestBody @Valid Usuario usuario) {
         log.info(usuario.toString());
-        //insert no banco de dados
+        return ResponseEntity.ok(usuarioService.save(usuario));
     }
 
-    ////http://localhost:8080/usuario?nome=Antonio&id=
+    ////http://localhost:8080/usuarios
     @GetMapping
-    public ResponseEntity<List<Usuario>> getAll(String nome, String id) {
-        Usuario usuario = new Usuario();
-        usuario.setId(123L);
-        return ResponseEntity.ok(List.of(usuario));
+    public ResponseEntity<List<Usuario>> getAll() {
+        return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    //http://localhost:8080/usuario/123
+    //http://localhost:8080/usuarios/123
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getById(@PathVariable("id") Long userId) {
-        Usuario usuario = new Usuario();
-        usuario.setId(userId);
-        return ResponseEntity.ok(usuario);
+    public ResponseEntity<Usuario> getById(@PathVariable(value = "id") Long userId) {
+        return ResponseEntity.ok(usuarioService.getById(userId));
     }
 
 
