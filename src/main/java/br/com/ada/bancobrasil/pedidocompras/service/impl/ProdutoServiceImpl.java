@@ -72,4 +72,10 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean exists() {
+        return produtoRepository.count() > 0;
+    }
+
 }

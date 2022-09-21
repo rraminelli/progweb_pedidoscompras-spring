@@ -18,4 +18,5 @@ public interface ProdutoService {
 
     void save(List<Produto> produtos);
 
+    boolean exists();
 }

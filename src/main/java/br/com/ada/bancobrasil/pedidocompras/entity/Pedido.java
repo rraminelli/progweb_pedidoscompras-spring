@@ -1,17 +1,19 @@
 package br.com.ada.bancobrasil.pedidocompras.entity;
 
 import br.com.ada.bancobrasil.pedidocompras.entity.enums.StatusPedidoEnum;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
 public class Pedido {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +31,6 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private Set<ItemPedido> itens;
+
 
 }

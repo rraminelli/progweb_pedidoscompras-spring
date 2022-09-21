@@ -28,7 +28,7 @@ public class ProdutoController {
 
     @GetMapping
     @ApiResponse(description = "Lista de produtos, filtro por nome e descricao")
-    public ResponseEntity<Page<Produto>> findAll(String filter,
+    public ResponseEntity<Page<Produto>> findAll(@RequestParam(value = "filter", required = false) String filter,
                                                  @ParameterObject @PageableDefault(size = 20, page = 0) Pageable pageable) {
         return ResponseEntity.ok(produtoService.findAll(filter, pageable));
     }
