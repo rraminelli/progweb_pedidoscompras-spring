@@ -1,12 +1,16 @@
 package br.com.ada.bancobrasil.pedidocompras.service.impl;
 
 import br.com.ada.bancobrasil.pedidocompras.dto.RealizarPedidoDto;
+import br.com.ada.bancobrasil.pedidocompras.dto.RealizarPedidoResponseDto;
 import br.com.ada.bancobrasil.pedidocompras.entity.ItemPedido;
 import br.com.ada.bancobrasil.pedidocompras.entity.Pedido;
 import br.com.ada.bancobrasil.pedidocompras.entity.Produto;
+import br.com.ada.bancobrasil.pedidocompras.entity.Usuario;
 import br.com.ada.bancobrasil.pedidocompras.entity.enums.StatusPedidoEnum;
+import br.com.ada.bancobrasil.pedidocompras.repository.PedidoRepository;
 import br.com.ada.bancobrasil.pedidocompras.service.PedidoService;
 import br.com.ada.bancobrasil.pedidocompras.service.ProdutoService;
+import br.com.ada.bancobrasil.pedidocompras.service.UsuarioService;
 import br.com.ada.bancobrasil.pedidocompras.service.impl.pedido.ValidarPedido;
 import org.springframework.stereotype.Service;
 
@@ -18,27 +22,33 @@ import java.util.stream.Collectors;
 @Service
 public class PedidoServiceImpl implements PedidoService {
 
+    final PedidoRepository pedidoRepository;
     final ProdutoService produtoService;
     final List<ValidarPedido> validacoes;
+    final UsuarioService usuarioService;
 
-    public PedidoServiceImpl(ProdutoService produtoService, List<ValidarPedido> validacoes) {
+    public PedidoServiceImpl(PedidoRepository pedidoRepository, ProdutoService produtoService, List<ValidarPedido> validacoes, UsuarioService usuarioService) {
+        this.pedidoRepository = pedidoRepository;
         this.produtoService = produtoService;
         this.validacoes = validacoes;
+        this.usuarioService = usuarioService;
     }
 
     @Override
-    public Pedido realizarPedido(final RealizarPedidoDto realizarPedidoDto) {
+    public RealizarPedidoResponseDto realizarPedido(final RealizarPedidoDto realizarPedidoDto) {
 
         final Pedido pedido = this.criarPedido(realizarPedidoDto);
 
         validacoes.forEach(validarPedido -> validarPedido.validar(pedido));
 
-        return pedido;
+        return new RealizarPedidoResponseDto(pedido.getId());
     }
 
     private Pedido criarPedido(RealizarPedidoDto realizarPedidoDto) {
 
-        /*Set<ItemPedido> itemPedidos = realizarPedidoDto.getItens().stream()
+        final Usuario usuario = usuarioService.getById(7L);
+
+        final Set<ItemPedido> itemPedidos = realizarPedidoDto.getItens().stream()
                 .map(pedidoItemDto -> {
 
                     final Produto produto = produtoService.getById(pedidoItemDto.getProdutoId());
@@ -52,15 +62,16 @@ public class PedidoServiceImpl implements PedidoService {
                 })
                 .collect(Collectors.toSet());
 
-        Pedido pedido = Pedido.builder()
+        final Pedido pedido = Pedido.builder()
                 .dataPedido(LocalDateTime.now())
                 .status(StatusPedidoEnum.NOVO)
-                //.usuario() TODO: SpringSecurity
+                .usuario(usuario) //TODO: SpringSecurity
                 .itens(itemPedidos)
                 .build();
 
-        return pedido;*/
-        return null;
+        pedidoRepository.save(pedido);
+
+        return pedido;
 
     }
 

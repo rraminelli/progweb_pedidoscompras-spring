@@ -7,10 +7,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
+@Builder(toBuilder = true)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
+@Getter
 @Entity
 public class Pedido {
 
