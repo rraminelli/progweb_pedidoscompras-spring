@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,6 +34,7 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.findAll(filter, pageable));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Produto> save(@Valid @RequestBody Produto produto) {
         return ResponseEntity.ok(produtoService.save(produto));
@@ -45,6 +47,7 @@ public class ProdutoController {
     }
 
     //http://server:8080/produtos/1
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long produtoId) {
         produtoService.delete(produtoId);

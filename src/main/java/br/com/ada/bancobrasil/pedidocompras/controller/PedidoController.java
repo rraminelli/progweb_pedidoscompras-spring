@@ -4,7 +4,9 @@ import br.com.ada.bancobrasil.pedidocompras.dto.RealizarPedidoDto;
 import br.com.ada.bancobrasil.pedidocompras.dto.RealizarPedidoResponseDto;
 import br.com.ada.bancobrasil.pedidocompras.entity.Pedido;
 import br.com.ada.bancobrasil.pedidocompras.service.PedidoService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +22,10 @@ public class PedidoController {
         this.pedidoService = pedidoService;
     }
 
+    @PreAuthorize("hasAnyRole('CLIENTE')")
     @PostMapping
     public ResponseEntity<RealizarPedidoResponseDto> realizarPedido(@RequestBody RealizarPedidoDto realizarPedidoDto) {
-
         return ResponseEntity.ok(pedidoService.realizarPedido(realizarPedidoDto));
-
     }
 
 }
